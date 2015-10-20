@@ -121,8 +121,6 @@ ENV.notifications = {
 
 As you can see in the last example the data function will be passed the current deploy context which can then be used to send data to services based on the current deploy.
 
-*Default:* `{}`
-
 ###httpClient
 
 The underlying http-library used to send POST-requests to the specified services. This allows users to customize the library that's used for http requests which is useful in tests but might be useful to some users as well. By default the plugin uses [request](https://github.com/request/request).

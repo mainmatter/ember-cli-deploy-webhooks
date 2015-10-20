@@ -16,7 +16,6 @@ module.exports = {
       name: options.name,
 
       defaultConfig: {
-        region: 'us-east-1',
         configuredServices: {
           bugsnag: {
             url: 'http://notify.bugsnag.com/deploy'

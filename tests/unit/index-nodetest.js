@@ -183,5 +183,16 @@ describe('notifications plugin', function() {
           assert.equal(serviceCalls.length, 1, 'Only (preconfigured) bugsnag service was called');
         });
     });
+
+    it('does not break when no services are configured in deploy.js', function() {
+      delete context.config.notifications.services;
+
+      plugin.beforeHook(context);
+      plugin.configure(context);
+
+      var promise = plugin.didDeploy(context);
+
+      return assert.isFulfilled(promise);
+    });
   });
 });
