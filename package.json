@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-deploy-notifications",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Ember CLI Deploy plugin to notify external services of a successful deployment",
   "directories": {
     "doc": "doc",
