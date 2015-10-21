@@ -61,7 +61,7 @@ describe('Notify', function() {
       return assert.isRejected(promise);
     });
 
-    it('logs when a success was successful', function() {
+    it('logs when a request was successful', function() {
       var data = { apiKey: '12341234' };
 
       var promise = subject.send(url, data);
