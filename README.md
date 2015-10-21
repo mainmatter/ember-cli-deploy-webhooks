@@ -52,7 +52,7 @@ $ ember deploy
 For detailed information on what plugin hooks are and how they work, please refer to the [Plugin Documentation][2].
 
 - `configure`
-- `didDeploy`
+- `didActivate`
 
 ## Configuration Options
 
