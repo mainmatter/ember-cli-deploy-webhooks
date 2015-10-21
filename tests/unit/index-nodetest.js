@@ -58,9 +58,9 @@ describe('notifications plugin', function() {
     assert.equal(plugin.name, 'notifications');
   });
 
-  describe('#didDeploy', function() {
-    it('implements the the `didDeploy`-hook', function() {
-      assert.ok(plugin.didDeploy);
+  describe('#didActivate', function() {
+    it('implements the `didActivate`-hook', function() {
+      assert.ok(plugin.didActivate);
     });
 
     describe('notifies services that are present as keys in the plugin config', function() {
@@ -69,7 +69,7 @@ describe('notifications plugin', function() {
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = plugin.didDeploy(context);
+          var promise = plugin.didActivate(context);
 
           return assert.isFulfilled(promise)
             .then(function() {
@@ -87,7 +87,7 @@ describe('notifications plugin', function() {
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = plugin.didDeploy(context);
+          var promise = plugin.didActivate(context);
 
           return assert.isFulfilled(promise)
             .then(function() {
@@ -118,7 +118,7 @@ describe('notifications plugin', function() {
         plugin.beforeHook(context);
         plugin.configure(context);
 
-        var promise = plugin.didDeploy(context);
+        var promise = plugin.didActivate(context);
 
         return assert.isFulfilled(promise)
           .then(function() {
@@ -139,7 +139,7 @@ describe('notifications plugin', function() {
         plugin.beforeHook(context);
         plugin.configure(context);
 
-        var promise = plugin.didDeploy(context);
+        var promise = plugin.didActivate(context);
 
         return assert.isRejected(promise);
       });
@@ -158,7 +158,7 @@ describe('notifications plugin', function() {
         plugin.beforeHook(context);
         plugin.configure(context);
 
-        var promise = plugin.didDeploy(context);
+        var promise = plugin.didActivate(context);
 
         return assert.isFulfilled(promise)
           .then(function() {
@@ -176,7 +176,7 @@ describe('notifications plugin', function() {
       plugin.beforeHook(context);
       plugin.configure(context);
 
-      var promise = plugin.didDeploy(context);
+      var promise = plugin.didActivate(context);
 
       return assert.isFulfilled(promise)
         .then(function() {
@@ -190,7 +190,7 @@ describe('notifications plugin', function() {
       plugin.beforeHook(context);
       plugin.configure(context);
 
-      var promise = plugin.didDeploy(context);
+      var promise = plugin.didActivate(context);
 
       return assert.isFulfilled(promise);
     });

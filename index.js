@@ -27,7 +27,7 @@ module.exports = {
         }
       },
 
-      didDeploy: function(context) {
+      didActivate: function(context) {
         var preConfig  = this.readConfig('configuredServices');
         var userConfig = this.readConfig('services');
 
