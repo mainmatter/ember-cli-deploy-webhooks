@@ -1,8 +1,10 @@
-var assert = require('ember-cli/tests/helpers/assert');
+var Promise = require('ember-cli/lib/ext/promise');
+var assert  = require('ember-cli/tests/helpers/assert');
 
 describe('notifications plugin', function() {
-  var subject, plugin, context, mockUi, mockHTTP, services, serviceCalls;
+  var subject, plugin, context, mockUi, mockHTTP, services, serviceCalls, callbackReturnValue;
 
+  var BUGSNAG_URI = 'http://notify.bugsnag.com/deploy';
 
   before(function() {
     subject = require('../../index');
@@ -15,14 +17,18 @@ describe('notifications plugin', function() {
       name: 'notifications'
     });
 
-    mockHTTP = {
-      post: function(url, data, cb) {
+    callbackReturnValue = undefined;
+
+    mockHTTP = function(context) {
+      return function(opts, cb) {
         serviceCalls.push({
-          url: url,
-          data: data.form || {}
+          url: opts.url,
+          method: opts.method,
+          headers: opts.headers,
+          body: opts.body || {}
         });
 
-        cb();
+        cb(callbackReturnValue);
       }
     };
 
@@ -34,11 +40,14 @@ describe('notifications plugin', function() {
       }
     };
 
-    services = {
-      bugsnag: {
-        data: function(context) {
-          return { apiKey: '1234' }
-        }
+    services = {};
+
+    plugin.log = function(message, opts) {
+      opts = opts || {};
+
+      if (!opts.verbose || (opts.verbose && this.ui.verbose)) {
+        this.ui.write('|    ');
+        this.ui.writeLine('- ' + message);
       }
     };
 
@@ -58,141 +67,253 @@ describe('notifications plugin', function() {
     assert.equal(plugin.name, 'notifications');
   });
 
-  describe('#didActivate', function() {
-    it('implements the `didActivate`-hook', function() {
-      assert.ok(plugin.didActivate);
-    });
+  describe('configuring services', function() {
+    it("warns of services that are configured but have not hook turned on", function() {
+      services.bugsnag = {
+        apiKey: '1234'
+      };
 
-    describe('notifies services that are present as keys in the plugin config', function() {
-      describe('pre-configured services', function() {
-        it('calls correct url for pre-configured services when no url is passed via config', function() {
-          plugin.beforeHook(context);
-          plugin.configure(context);
-
-          var promise = plugin.didActivate(context);
-
-          return assert.isFulfilled(promise)
-            .then(function() {
-              assert.equal(serviceCalls.length, 1);
-
-              var call = serviceCalls[0];
-              assert.equal(call.url, 'http://notify.bugsnag.com/deploy');
-              assert.deepEqual(call.data, { apiKey: '1234' });
-            });
-        });
-
-        it('calls custom-url for preconfigured services when url is passed via config', function() {
-          services.bugsnag.url = 'http://bugsnag.simplabs.com/deploy'
-
-          plugin.beforeHook(context);
-          plugin.configure(context);
-
-          var promise = plugin.didActivate(context);
-
-          return assert.isFulfilled(promise)
-            .then(function() {
-              assert.equal(serviceCalls.length, 1);
-
-              var call = serviceCalls[0];
-
-              assert.equal(call.url, 'http://bugsnag.simplabs.com/deploy');
-              assert.deepEqual(call.data, { apiKey: '1234' });
-            });
-        });
-      });
-
-      it('calls service when specifying data-function and url', function() {
-        var customServiceURL    = 'http://deployLog.simplabs.com';
-        var deployer            = 'LevelbossMike';
-        var customServiceConfig = {
-          url: customServiceURL,
-          data: function() {
-            return {
-              deployer: deployer
-            }
-          }
-        };
-
-        services.simplabs = customServiceConfig;
-
-        plugin.beforeHook(context);
-        plugin.configure(context);
-
-        var promise = plugin.didActivate(context);
-
-        return assert.isFulfilled(promise)
-          .then(function() {
-            assert.equal(serviceCalls.length, 2);
-
-            var call = serviceCalls[1];
-
-            assert.equal(call.url, customServiceURL);
-            assert.deepEqual(call.data, { deployer: deployer });
-          });
-      });
-
-      it('rejects when request fails', function() {
-        mockHTTP.post = function(url, data, cb) {
-          cb('error');
-        };
-
-        plugin.beforeHook(context);
-        plugin.configure(context);
-
-        var promise = plugin.didActivate(context);
-
-        return assert.isRejected(promise);
-      });
-
-      it("can be passed a function that gets passed the deploy context - the function's return value will be sent as data", function() {
-        var deployer     = 'Simplabs';
-        context.deployer = deployer;
-
-        services.bugsnag.data = function(context) {
-          return {
-            apiKey: '1234',
-            deployer: context.deployer
-          };
-        };
-
-        plugin.beforeHook(context);
-        plugin.configure(context);
-
-        var promise = plugin.didActivate(context);
-
-        return assert.isFulfilled(promise)
-          .then(function() {
-            assert.equal(serviceCalls[0].data.deployer, deployer, "It's possible to send dynamic content based on deploy context");
-          });
-      });
-
-    });
-
-    it("does not notify custom services that don't define a data AND url property", function() {
-      services.customService = {
-        url: 'http://deployLog.simplabs.com'
+      services.slack = {
+        webhookURL: '<your-webhook-url>'
       };
 
       plugin.beforeHook(context);
       plugin.configure(context);
 
-      var promise = plugin.didActivate(context);
+      var promise = plugin.setup(context);
+      var messages = mockUi.messages;
 
-      return assert.isFulfilled(promise)
-        .then(function() {
-          assert.equal(serviceCalls.length, 1, 'Only (preconfigured) bugsnag service was called');
-        });
+      assert.isAbove(messages.length, 0);
+      assert.equal(messages[0], '- Warning! bugsnag - Service configuration found but no hook specified in deploy configuration. Service will not be notified.')
     });
 
-    it('does not break when no services are configured in deploy.js', function() {
-      delete context.config.notifications.services;
+    describe('preconfigured services', function() {
+      describe('bugsnag', function() {
+        beforeEach(function() {
+          services.bugsnag = {
+            didActivate: true,
+            body: {
+              apiKey: '1234',
+            }
+          };
+        });
 
-      plugin.beforeHook(context);
-      plugin.configure(context);
+        it('notifies the bugsnag service correctly on `didActivate`', function() {
+          plugin.beforeHook(context);
+          plugin.configure(context);
 
-      var promise = plugin.didActivate(context);
+          var promise = plugin.didActivate(context);
 
-      return assert.isFulfilled(promise);
+          return assert.isFulfilled(promise)
+            .then(function() {
+              assert.equal(serviceCalls.length, 1);
+
+              var call = serviceCalls[0];
+              assert.equal(call.url, BUGSNAG_URI);
+              assert.deepEqual(call.body, { apiKey: '1234' });
+            });
+        });
+
+        it('calls custom-url for preconfigured services when url is passed via config', function() {
+          var CUSTOM_BUGSNAG_URI = 'http://bugsnag.simplabs.com/deploy';
+          services.bugsnag.url   = CUSTOM_BUGSNAG_URI;
+
+          plugin.beforeHook(context);
+          plugin.configure(context);
+
+          var promise = plugin.didActivate(context);
+
+          return assert.isFulfilled(promise)
+            .then(function() {
+              assert.equal(serviceCalls.length, 1);
+
+              var call = serviceCalls[0];
+
+              assert.equal(call.url, CUSTOM_BUGSNAG_URI);
+              assert.deepEqual(call.body, { apiKey: '1234' });
+            });
+        });
+
+        it('is enough to specify specific properties to build the correct url', function() {
+          services.bugsnag = {
+            apiKey: '4321',
+            didActivate: true
+          };
+
+          plugin.beforeHook(context);
+          plugin.configure(context);
+
+          var promise = plugin.didActivate(context);
+
+          return assert.isFulfilled(promise)
+            .then(function() {
+              assert.equal(serviceCalls.length, 1);
+
+              var call = serviceCalls[0];
+
+              assert.equal(call.url, BUGSNAG_URI);
+              assert.deepEqual(call.body, { apiKey: '4321' });
+            });
+        });
+
+        it('is possible to notify on different hooks', function() {
+          services.bugsnag.didActivate = false;
+          services.bugsnag.didDeploy = {
+            body: {
+              apiKey: 'hook specific'
+            }
+          };
+
+          plugin.beforeHook(context);
+          plugin.configure(context);
+          plugin.didActivate(context);
+
+          var promise = plugin.didDeploy(context);
+
+          return assert.isFulfilled(promise)
+            .then(function() {
+              assert.equal(serviceCalls.length, 1);
+
+              var call = serviceCalls[0];
+
+              assert.equal(call.url, BUGSNAG_URI);
+              assert.deepEqual(call.body, { apiKey: 'hook specific' });
+            });
+        });
+      });
+
+      describe('slack', function() {
+        it('does not implement any hook by default', function() {
+          services.slack = {};
+
+          plugin.beforeHook(context);
+          plugin.configure(context);
+
+          var promise = Promise.all([
+            plugin.setup(context),
+
+            plugin.willDeploy(context),
+
+            plugin.willBuild(context),
+            plugin.build(context),
+            plugin.didBuild(context),
+
+            plugin.willPrepare(context),
+            plugin.prepare(context),
+            plugin.didPrepare(context),
+
+            plugin.willUpload(context),
+            plugin.upload(context),
+            plugin.didUpload(context),
+
+            plugin.willActivate(context),
+            plugin.activate(context),
+            plugin.didActivate(context),
+
+            plugin.didDeploy(context),
+            plugin.teardown(context)
+          ]);
+
+          return assert.isFulfilled(promise)
+            .then(function() {
+              assert.equal(serviceCalls.length, 0);
+            })
+        });
+
+        it('is possible to specify hooks where slack should be notified', function() {
+          var webhookURL = 'https://hooks.slack.com/services/my-webhook-url';
+          services.slack = {
+            webhookURL: webhookURL,
+
+            didDeploy: {
+              body: {
+                text: 'didDeploy'
+              }
+            },
+
+            didActivate: {
+              body: {
+                text: 'didActivate'
+              }
+            }
+          };
+
+          plugin.beforeHook(context);
+          plugin.configure(context);
+
+          var promise = Promise.all([
+            plugin.setup(context),
+
+            plugin.willDeploy(context),
+
+            plugin.willBuild(context),
+            plugin.build(context),
+            plugin.didBuild(context),
+
+            plugin.willPrepare(context),
+            plugin.prepare(context),
+            plugin.didPrepare(context),
+
+            plugin.willUpload(context),
+            plugin.upload(context),
+            plugin.didUpload(context),
+
+            plugin.willActivate(context),
+            plugin.activate(context),
+            plugin.didActivate(context),
+
+            plugin.didDeploy(context),
+            plugin.teardown(context)
+          ]);
+
+          return assert.isFulfilled(promise)
+            .then(function() {
+              assert.equal(serviceCalls.length, 2);
+
+              var didActivateMessage = serviceCalls[0];
+              var didDeployMessage   = serviceCalls[1];
+
+              assert.deepEqual(didActivateMessage.body, { text: 'didActivate' });
+              assert.deepEqual(didActivateMessage.url, webhookURL);
+              assert.deepEqual(didActivateMessage.method, 'POST');
+
+              assert.deepEqual(didDeployMessage.body, { text: 'didDeploy' });
+              assert.deepEqual(didDeployMessage.url, webhookURL);
+              assert.deepEqual(didDeployMessage.method, 'POST');
+            });
+        });
+      });
+    });
+
+    describe('user configured services', function() {
+      it('allows to notify services that are not preconfigured', function() {
+        var CUSTOM_URI = 'https://my-custom-hack.com/deployment-notifications';
+
+        services.custom = {
+          url: CUSTOM_URI,
+          headers: {},
+          method: 'POST',
+          body: {
+            deployer: 'levelbossmike'
+          },
+          didActivate: true
+        };
+
+        plugin.beforeHook(context);
+        plugin.configure(context);
+
+        var promise = plugin.didActivate(context);
+
+        return assert.isFulfilled(promise)
+          .then(function() {
+            assert.equal(serviceCalls.length, 1);
+
+            var call = serviceCalls[0];
+
+            assert.equal(call.url, CUSTOM_URI);
+            assert.deepEqual(call.body, { deployer: 'levelbossmike' });
+          });
+      });
     });
   });
 });
