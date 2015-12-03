@@ -359,3 +359,9 @@ The underlying http-library used to send requests to the specified services. Thi
 - `npm test`
 
 [1]: http://ember-cli.github.io/ember-cli-deploy/plugins "Plugin Documentation"
+
+## License
+
+Ember Simple Auth is developed by and &copy;
+[simplabs GmbH](http://simplabs.com) and contributors. It is released under the
+[MIT License](https://github.com/simplabs/ember-simple-auth/blob/master/LICENSE).
