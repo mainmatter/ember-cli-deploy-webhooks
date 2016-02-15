@@ -92,9 +92,19 @@ A `service` configuration needs to provide four properties as configuration for
 - `method` The HTTP-method to use for the call (defaults to `'POST'`)
 - `headers` A property to specify custom HTTP-headers (defaults to `{}`)
 - `body` The body of the request
+- `auth` used for http-authentication
+
+`auth` should be a hash containing values:
+
+* `user` || `username`
+* `pass` || `password`
+
+Bearer authentication is also supported. Please refer to
+[request](https://github.com/request/request#http-authentication)'s docs for
+more details as `ember-cli-deploy-notifications` uses `request` internally.
 
 <hr/>
-**Whenever one of these properties returns a _falsy_ value, the service will _not_ be
+**Whenever one of these properties (except `auth`) returns a _falsy_ value, the service will _not_ be
 called.**
 <hr/>
 
