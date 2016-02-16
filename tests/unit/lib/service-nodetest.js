@@ -157,5 +157,92 @@ describe('Service', function() {
 
       assert.deepEqual(serviceCallOpts, expected);
     });
+
+    describe('http-authentication', function() {
+      it('users can pass the auth property', function() {
+        var defaults = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          apiKey: 'api-key',
+          body: function() {
+            return {
+              apiKey: this.apiKey
+            }
+          }
+        };
+
+        var user = {
+          auth: {
+            user: 'tomster',
+            pass: 'ember'
+          }
+        };
+
+        var service = new Service({defaults: defaults, user: user});
+
+        var serviceCallOpts = service.buildServiceCall();
+
+        var expected = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          auth: {
+            user: 'tomster',
+            pass: 'ember'
+          },
+          body: {
+            apiKey: 'api-key'
+          }
+        };
+
+        assert.deepEqual(serviceCallOpts, expected);
+      });
+
+      it('behaves like any configurable and can use a function for configuration', function() {
+        var defaults = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          auth: function() {
+            return {
+              user: this.username,
+              pass: this.password
+            }
+          },
+          apiKey: 'api-key',
+          body: function() {
+            return {
+              apiKey: this.apiKey
+            }
+          }
+        };
+
+        var user = {
+          username: 'tomster',
+          password: 'ember'
+        };
+
+        var service = new Service({defaults: defaults, user: user});
+
+        var serviceCallOpts = service.buildServiceCall();
+
+        var expected = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          auth: {
+            user: 'tomster',
+            pass: 'ember'
+          },
+          body: {
+            apiKey: 'api-key'
+          }
+        };
+
+        assert.deepEqual(serviceCallOpts, expected);
+
+      });
+    });
   });
 });
