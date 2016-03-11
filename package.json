@@ -19,6 +19,8 @@
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.2.0",
+    "chai": "^3.3.0",
+    "chai-as-promised": "^5.1.0",
     "ember-cli": "1.13.13",
     "ember-cli-app-version": "^1.0.0",
     "ember-cli-content-security-policy": "0.4.0",
@@ -35,22 +37,20 @@
     "ember-disable-proxy-controllers": "^1.0.1",
     "ember-export-application-global": "^1.0.4",
     "ember-disable-prototype-extensions": "^1.0.0",
-    "ember-try": "~0.0.8"
+    "ember-try": "~0.0.8",
+    "glob": "^5.0.15",
+    "mocha": "^2.3.3",
+    "nock": "^2.15.0"
   },
   "keywords": [
     "ember-addon",
     "ember-cli-deploy-plugin"
   ],
   "dependencies": {
-    "chai": "^3.3.0",
-    "chai-as-promised": "^5.1.0",
     "core-object": "^1.1.0",
     "ember-cli-babel": "^5.1.5",
     "ember-cli-deploy-plugin": "0.2.0",
-    "glob": "^5.0.15",
     "lodash": "^3.10.1",
-    "mocha": "^2.3.3",
-    "nock": "^2.15.0",
     "request": "^2.65.0"
   },
   "ember-addon": {
