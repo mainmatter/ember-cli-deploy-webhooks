@@ -1,7 +1,7 @@
 var Promise = require('ember-cli/lib/ext/promise');
 var assert  = require('ember-cli/tests/helpers/assert');
 
-describe('notifications plugin', function() {
+describe('webhooks plugin', function() {
   var subject, plugin, context, mockUi, mockHTTP, services, serviceCalls, callbackReturnValue;
 
   var BUGSNAG_URI = 'http://notify.bugsnag.com/deploy';
@@ -14,7 +14,7 @@ describe('notifications plugin', function() {
     serviceCalls = [];
 
     plugin = subject.createDeployPlugin({
-      name: 'notifications'
+      name: 'webhooks'
     });
 
     callbackReturnValue = undefined;
@@ -55,7 +55,7 @@ describe('notifications plugin', function() {
       ui: mockUi,
 
       config: {
-        notifications: {
+        webhooks: {
           services: services,
           httpClient: mockHTTP
         }
@@ -64,7 +64,7 @@ describe('notifications plugin', function() {
   });
 
   it('has a name', function() {
-    assert.equal(plugin.name, 'notifications');
+    assert.equal(plugin.name, 'webhooks');
   });
 
   describe('configuring services', function() {
@@ -287,7 +287,7 @@ describe('notifications plugin', function() {
 
     describe('user configured services', function() {
       it('allows to notify services that are not preconfigured', function() {
-        var CUSTOM_URI = 'https://my-custom-hack.com/deployment-notifications';
+        var CUSTOM_URI = 'https://my-custom-hack.com/deployment-webhooks';
 
         services.custom = {
           url: CUSTOM_URI,

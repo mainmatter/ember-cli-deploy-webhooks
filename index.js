@@ -45,7 +45,7 @@ function notificationHook(hookName) {
 }
 
 module.exports = {
-  name: 'ember-cli-deploy-notifications',
+  name: 'ember-cli-deploy-webhooks',
 
   createDeployPlugin: function(options) {
     var DeployPlugin = DeployPluginBase.extend({

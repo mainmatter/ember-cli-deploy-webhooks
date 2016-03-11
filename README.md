@@ -1,9 +1,9 @@
-# ember-cli-deploy-notifications [![Build Status](https://travis-ci.org/simplabs/ember-cli-deploy-notifications.svg)](https://travis-ci.org/simplabs/ember-cli-deploy-notifications)
+# ember-cli-deploy-webhooks [![Build Status](https://travis-ci.org/simplabs/ember-cli-deploy-webhooks.svg)](https://travis-ci.org/simplabs/ember-cli-deploy-webhooks)
 
 > An ember-cli-deploy plugin to notify external services (e.g. an error
 > tracking service) of successful hook executions in your deploy pipeline.
 
-[![](https://ember-cli-deploy.github.io/ember-cli-deploy-version-badges/plugins/ember-cli-deploy-notifications.svg)](http://ember-cli-deploy.github.io/ember-cli-deploy-version-badges/)
+[![](https://ember-cli-deploy.github.io/ember-cli-deploy-version-badges/plugins/ember-cli-deploy-webhooks.svg)](http://ember-cli-deploy.github.io/ember-cli-deploy-version-badges/)
 
 ## What is an ember-cli-deploy plugin?
 
@@ -18,13 +18,13 @@ To get up and running quickly, do the following:
 - Install this plugin
 
 ```bash
-$ ember install ember-cli-deploy-notifications
+$ ember install ember-cli-deploy-webhooks
 ```
 - Place the following configuration into `config/deploy.js`
 
 
 ```javascript
-ENV.notifications = {
+ENV.webhooks = {
   services: {
     "<some-key>": {
       url: <service-url>,
@@ -57,7 +57,7 @@ For detailed information on what plugin hooks are and how they work, please refe
 - `configure`
 - `setup`
 
-_Hooks that can be used for notifications:_
+_Hooks that can be used for webhooks:_
 
 - `willDeploy`
 - `willBuild`
@@ -86,7 +86,7 @@ For detailed information on how configuration of plugins works, please refer to 
 An object that identifies all webhooks you want to notify. You will put a key for every service you want to call on deploy here.
 
 A `service` configuration needs to provide four properties as configuration for
-`ember-cli-deploy-notifications` to know how to notify the service correctly:
+`ember-cli-deploy-webhooks` to know how to notify the service correctly:
 
 - `url` The url to call
 - `method` The HTTP-method to use for the call (defaults to `'POST'`)
@@ -101,7 +101,7 @@ A `service` configuration needs to provide four properties as configuration for
 
 Bearer authentication is also supported. Please refer to
 [request](https://github.com/request/request#http-authentication)'s docs for
-more details as `ember-cli-deploy-notifications` uses `request` internally.
+more details as `ember-cli-deploy-webhooks` uses `request` internally.
 
 <hr/>
 **Whenever one of these properties (except `auth`) returns a _falsy_ value, the service will _not_ be
@@ -116,7 +116,7 @@ itself.
 *Example:*
 
 ```javascript
-ENV.notifications = {
+ENV.webhooks = {
   services: {
     slack: {
       webhookURL: '<your-webhook-url>',
@@ -145,7 +145,7 @@ als be used to override the defaults that you specify on a service.
 *Example:*
 
 ```javascript
-  ENV.notifications = {
+  ENV.webhooks = {
     services: {
       slack: {
         url: 'your-webhook-url',
@@ -182,7 +182,7 @@ the defaults.
 *Example:*
 
 ```javascript
-ENV.notifications = {
+ENV.webhooks = {
   services: {
     bugsnag: {
       url: 'https://bugsnag.simplabs.com/deploy',
@@ -199,7 +199,7 @@ plugin users. This for example is basically the default implementation that is
 already configured for the slack service:
 
 ```javascript
-  ENV.notifications.services = {
+  ENV.webhooks.services = {
     // ...
     slack: {
       url: function() {
@@ -217,7 +217,7 @@ hooks that should send a message to slack.
 *Example:*
 
 ```javascript
-  ENV.notifications.services = {
+  ENV.webhooks.services = {
     slack: {
       webhookURL: '<your-slack-webhook-url>',
       didActivate: {
@@ -244,7 +244,7 @@ hook that actually makes a new version of your app available to your users.
 *Example:*
 
 ```javascript
-  ENV.notifications.services = {
+  ENV.webhooks.services = {
     bugsnag: {
       apiKey: '<your-api-key>',
       didActivate: true
@@ -260,7 +260,7 @@ __Required configuration__
 __Default configuration__
 
 ```
-  ENV.notifications.services = {
+  ENV.webhooks.services = {
     bugsnag: {
       url: 'http://notify.bugsnag.com/deploy',
       method: 'POST',
@@ -284,7 +284,7 @@ __Default configuration__
 *Example:*
 
 ```javascript
-  ENV.notifications.services = {
+  ENV.webhooks.services = {
     slack: {
       webhookURL: '<your-slack-webhook-url>',
       didActivate: {
@@ -308,7 +308,7 @@ least you have to provide a `text` property in the payload.
 __Default configuration__
 
 ```javascript
-  ENV.notifications.services = {
+  ENV.webhooks.services = {
     // ...
     slack: {
       url: function() {
@@ -329,7 +329,7 @@ options can be overridden as described before of course.
 *Example:*
 
 ```javascript
-ENV.notifications = {
+ENV.webhooks = {
   services: {
     simplabs: {
       url: 'https://notify.simplabs.com/deploy',
