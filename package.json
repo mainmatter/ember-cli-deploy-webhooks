@@ -1,7 +1,7 @@
 {
-  "name": "ember-cli-deploy-notifications",
-  "version": "0.2.0",
-  "description": "Ember CLI Deploy plugin to notify external services during deployments.",
+  "name": "ember-cli-deploy-webhooks",
+  "version": "0.3.0",
+  "description": "Ember CLI Deploy plugin to notify webhooks/services during deployments.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,7 +11,7 @@
     "start": "ember server",
     "test": "node tests/runner.js"
   },
-  "repository": "https://github.com/simplabs/ember-cli-deploy-notifications",
+  "repository": "https://github.com/simplabs/ember-cli-deploy-webhooks",
   "engines": {
     "node": ">= 0.10.0"
   },
