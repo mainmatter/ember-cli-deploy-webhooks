@@ -41,6 +41,10 @@ describe('Notify', function() {
         apiKey: '1234'
       })
       .reply(200, 'OK')
+      .post('/deploy', {
+        apiKey: '4321'
+      })
+      .reply(200, { status: 'OK' })
       .post('/deploy', {})
       .replyWithError(401, 'Bad Request');
   });
@@ -162,6 +166,25 @@ describe('Notify', function() {
 
           assert.isAbove(messages.length, 0);
           assert.equal(messages[0], '- '+serviceKey+' => OK');
+        });
+    });
+
+    it('logs when a request is an object', function() {
+      var data = { apiKey: '4321' };
+
+      var opts = {
+        url: url,
+        body: data
+      }
+
+      var promise = subject.send(serviceKey, opts);
+
+      return assert.isFulfilled(promise)
+        .then(function() {
+          var messages = mockUi.messages;
+
+          assert.isAbove(messages.length, 0);
+          assert.equal(messages[0], '- '+serviceKey+' => {"status":"OK"}');
         });
     });
 
