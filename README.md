@@ -368,7 +368,7 @@ The underlying http-library used to send requests to the specified services. Thi
 
 - `npm test`
 
-[1]: http://ember-cli.github.io/ember-cli-deploy/plugins "Plugin Documentation"
+[1]: http://ember-cli-deploy.com/docs/v0.6.x/plugins-overview/ "Plugin Documentation"
 
 ## License
 
