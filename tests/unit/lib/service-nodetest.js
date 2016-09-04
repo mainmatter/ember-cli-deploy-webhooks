@@ -244,5 +244,75 @@ describe('Service', function() {
 
       });
     });
+
+    describe('critical-webhook', function() {
+      it('hook can be set as critical', function() {
+        var defaults = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          apiKey: 'api-key',
+          body: function() {
+            return {
+              apiKey: this.apiKey
+            }
+          }
+        };
+
+        var user = { critical: true };
+
+        var service = new Service({defaults: defaults, user: user});
+
+        var serviceCallOpts = service.buildServiceCall();
+
+        var expected = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          critical: true,
+          body: {
+            apiKey: 'api-key'
+          }
+        };
+
+        assert.deepEqual(serviceCallOpts, expected);
+      });
+
+      it('behaves like any configurable and can use a function for configuration', function() {
+        var defaults = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          critical: function() {
+            return this.isCritical;
+          },
+          apiKey: 'api-key',
+          body: function() {
+            return {
+              apiKey: this.apiKey
+            }
+          }
+        };
+
+        var user = { isCritical: true};
+
+        var service = new Service({defaults: defaults, user: user});
+
+        var serviceCallOpts = service.buildServiceCall();
+
+        var expected = {
+          url: 'url',
+          method: 'POST',
+          headers: {},
+          critical: true,
+          body: {
+            apiKey: 'api-key'
+          }
+        };
+
+        assert.deepEqual(serviceCallOpts, expected);
+
+      });
+    });
   });
 });
