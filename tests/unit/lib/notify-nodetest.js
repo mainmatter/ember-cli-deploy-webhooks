@@ -213,5 +213,26 @@ describe('Notify', function() {
           });
       });
     });
+
+    describe('when request fails and critical is true', function() {
+      it('reject when the request fails', function() {
+        var promise = subject.send(serviceKey, {
+          url: url,
+          body: {},
+          critical: true
+        });
+        return assert.isRejected(promise);
+      });
+
+      it('reject and logs to the console', function() {
+        var promise = subject.send(serviceKey, {
+          url: url,
+          body: {},
+          critical: true
+        });
+
+        return assert.isRejected(promise);
+      });
+    });
   });
 });
