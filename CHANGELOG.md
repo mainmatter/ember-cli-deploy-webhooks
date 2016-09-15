@@ -1,3 +1,8 @@
+# 0.4.0
+
+* Webhooks can now be defined as **critical** so that when they fail the
+  complete deployment will fail, see #19.
+
 # 0.3.0
 
 * The Addon was renamed to ember-cli-deploy-webhooks, see #14.
