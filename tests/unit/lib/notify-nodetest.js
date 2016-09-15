@@ -3,7 +3,7 @@ var nock = require('nock');
 
 
 describe('Notify', function() {
-  var Notify, subject, scope, mockUi, plugin, url, serviceKey;
+  var Notify, subject, mock_request, mock_request_bad_url, mockUi, plugin, url, serviceKey;
 
   before(function() {
     Notify = require('../../../lib/notify');
@@ -36,7 +36,7 @@ describe('Notify', function() {
       }
     };
 
-    scope = nock('http://notify.bugsnag.com')
+    mock_request = nock('http://notify.bugsnag.com')
       .post('/deploy', {
         apiKey: '1234'
       })
@@ -45,13 +45,21 @@ describe('Notify', function() {
         apiKey: '4321'
       })
       .reply(200, { status: 'OK' })
-      .post('/deploy', {})
-      .replyWithError(401, 'Bad Request');
+      .post('/deploy', {
+        apiKey: '4321',
+        bar: 'foo'
+      })
+      .reply(500, { status: 'Internal Server Error' });
+
+      mock_request_bad_url = nock('http://notify.bugsnag.comm')
+        .post('/deploy', {})
+        .replyWithError('Timeout');
   });
 
   describe('#send', function() {
     beforeEach(function() {
       url = 'http://notify.bugsnag.com/deploy';
+      bad_url = 'http://notify.bugsnag.comm/deploy';
       subject = new Notify({
         plugin: plugin
       });
@@ -188,10 +196,28 @@ describe('Notify', function() {
         });
     });
 
+    it('logs when a request was successful and critical is true', function() {
+      var opts = {
+        url: url,
+        body: { apiKey: '4321' },
+        critical: true
+      }
+
+      var promise = subject.send(serviceKey, opts);
+
+      return assert.isFulfilled(promise)
+        .then(function() {
+          var messages = mockUi.messages;
+
+          assert.isAbove(messages.length, 0);
+          assert.equal(messages[0], '- '+serviceKey+' => {"status":"OK"}');
+        });
+    });
+
     describe('when request fails', function() {
       it('resolves when the request fails', function() {
         var promise = subject.send(serviceKey, {
-          url: url,
+          url: bad_url,
           body: {}
         });
 
@@ -200,7 +226,7 @@ describe('Notify', function() {
 
       it('logs to the console', function() {
         var promise = subject.send(serviceKey, {
-          url: url,
+          url: bad_url,
           body: {}
         });
 
@@ -209,7 +235,7 @@ describe('Notify', function() {
             var messages = mockUi.messages;
 
             assert.isAbove(messages.length, 0);
-            assert.equal(messages[0], '- '+serviceKey+' => Error: 401');
+            assert.equal(messages[0], '- '+serviceKey+' => Error: Timeout');
           });
       });
     });
@@ -217,17 +243,20 @@ describe('Notify', function() {
     describe('when request fails and critical is true', function() {
       it('reject when the request fails', function() {
         var promise = subject.send(serviceKey, {
-          url: url,
+          url: bad_url,
           body: {},
           critical: true
         });
         return assert.isRejected(promise);
       });
 
-      it('reject and logs to the console', function() {
+      it('reject when the status code is not 2xx', function() {
         var promise = subject.send(serviceKey, {
           url: url,
-          body: {},
+          body: {
+            apiKey: '4321',
+            bar: 'foo' 
+          },
           critical: true
         });
 
