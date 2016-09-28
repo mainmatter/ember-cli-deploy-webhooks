@@ -1,3 +1,8 @@
+# 0.4.1
+
+* Fixed a bug that caused the deployment to not fail although a webhook marked
+  as critical did not actually succeed, see #20.
+
 # 0.4.0
 
 * Webhooks can now be defined as **critical** so that when they fail the
