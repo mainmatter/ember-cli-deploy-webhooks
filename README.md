@@ -38,7 +38,7 @@ ENV.webhooks = {
           apiKey: <your-api-key>
         };
       },
-      didActivate: true,
+      didActivate: true
     }
   }
 }
