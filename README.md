@@ -37,8 +37,8 @@ ENV.webhooks = {
         return {
           apiKey: <your-api-key>
         };
-      }
-      didActivate: true
+      },
+      didActivate: true,
     }
   }
 }
