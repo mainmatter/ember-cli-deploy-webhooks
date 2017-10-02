@@ -93,6 +93,7 @@ A `service` configuration needs to provide four properties as configuration for
 - `headers` A property to specify custom HTTP-headers (defaults to `{}`)
 - `body` The body of the request
 - `auth` used for http-authentication
+- `critical` if true, webhook failures will abort deploy
 
 `auth` should be a hash containing values:
 
