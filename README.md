@@ -81,7 +81,7 @@ _Hooks that can be used for webhooks:_
 
 For detailed information on how configuration of plugins works, please refer to the [Plugin Documentation][1].
 
-###services
+### services
 
 An object that identifies all webhooks you want to notify. You will put a key for every service you want to call on deploy here.
 
@@ -235,7 +235,7 @@ Currently available preconfigured services are:
 - `bugsnag` [An error-tracking service](https://bugsnag.com)
 - `slack` [The popular messaging app](https://slack.com/)
 
-####bugsnag
+#### bugsnag
 
 To configure bugsnag you need to at least provide an `apiKey` and specify
 a hook on which bugsnag should be notified of a deployment. You'll most likely
@@ -280,7 +280,7 @@ __Default configuration__
   }
 ```
 
-####slack
+#### slack
 
 *Example:*
 
@@ -361,7 +361,7 @@ ENV.webhooks = {
 };
 ```
 
-###httpClient
+### httpClient
 
 The underlying http-library used to send requests to the specified services. This allows users to customize the library that's used for http requests which is useful in tests but might be useful to some users as well. By default the plugin uses [request](https://github.com/request/request).
 
