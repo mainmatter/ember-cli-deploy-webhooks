@@ -1,3 +1,8 @@
+# 0.4.2
+
+* ember-cli-deply-webhooks now uses rsvp for promises instead of the Ember CLI
+  Promise implementation, see #23.
+
 # 0.4.1
 
 * Fixed a bug that caused the deployment to not fail although a webhook marked

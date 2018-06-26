@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var Promise          = require('ember-cli/lib/ext/promise');
+var RSVP             = require('rsvp');
 var DeployPluginBase = require('ember-cli-deploy-plugin');
 var Notify = require('./lib/notify');
 var Service = require('./lib/service');
@@ -40,7 +40,7 @@ function notificationHook(hookName) {
       }
     }
 
-    return Promise.all(promises);
+    return RSVP.all(promises);
   }
 }
 

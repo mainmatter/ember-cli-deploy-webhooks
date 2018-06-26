@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-deploy-webhooks",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Ember CLI Deploy plugin for calling webhooks during deployments",
   "directories": {
     "doc": "doc",
@@ -51,7 +51,7 @@
     "ember-cli-babel": "^5.1.5",
     "ember-cli-deploy-plugin": "0.2.9",
     "lodash": "^4.17.4",
-    "request": "^2.65.0"
+    "rsvp": "^3.5.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
