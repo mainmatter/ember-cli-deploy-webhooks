@@ -1,6 +1,10 @@
-var assert = require('ember-cli/tests/helpers/assert');
-var nock = require('nock');
+const chai = require('chai');
+const chaiAsPromised = require("chai-as-promised");
+const nock = require('nock');
 
+chai.use(chaiAsPromised);
+
+const assert = chai.assert;
 
 describe('Notify', function() {
   var Notify, subject, mock_request, mock_request_bad_url, mockUi, plugin, url, serviceKey;
@@ -255,7 +259,7 @@ describe('Notify', function() {
           url: url,
           body: {
             apiKey: '4321',
-            bar: 'foo' 
+            bar: 'foo'
           },
           critical: true
         });

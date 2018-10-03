@@ -1,4 +1,9 @@
-var assert = require('ember-cli/tests/helpers/assert');
+const chai = require('chai');
+const chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
+
+const assert = chai.assert;
 
 describe('Service', function() {
   var Service;

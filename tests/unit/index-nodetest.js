@@ -1,10 +1,15 @@
-var Promise = require('ember-cli/lib/ext/promise');
-var assert  = require('ember-cli/tests/helpers/assert');
+const Promise = require('rsvp');
+const chai = require('chai');
+const chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
+
+const assert = chai.assert;
 
 describe('webhooks plugin', function() {
-  var subject, plugin, context, mockUi, mockHTTP, services, serviceCalls, callbackReturnValue;
+  let subject, plugin, context, mockUi, mockHTTP, services, serviceCalls, callbackReturnValue;
 
-  var BUGSNAG_URI = 'http://notify.bugsnag.com/deploy';
+  let BUGSNAG_URI = 'http://notify.bugsnag.com/deploy';
 
   before(function() {
     subject = require('../../index');
@@ -80,8 +85,8 @@ describe('webhooks plugin', function() {
       plugin.beforeHook(context);
       plugin.configure(context);
 
-      var promise = plugin.setup(context);
-      var messages = mockUi.messages;
+      let promise = plugin.setup(context);
+      let messages = mockUi.messages;
 
       assert.isAbove(messages.length, 0);
       assert.equal(messages[0], '- Warning! bugsnag - Service configuration found but no hook specified in deploy configuration. Service will not be notified.')
@@ -102,32 +107,32 @@ describe('webhooks plugin', function() {
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = plugin.didActivate(context);
+          let promise = plugin.didActivate(context);
 
           return assert.isFulfilled(promise)
             .then(function() {
               assert.equal(serviceCalls.length, 1);
 
-              var call = serviceCalls[0];
+              let call = serviceCalls[0];
               assert.equal(call.url, BUGSNAG_URI);
               assert.deepEqual(call.body, { apiKey: '1234' });
             });
         });
 
         it('calls custom-url for preconfigured services when url is passed via config', function() {
-          var CUSTOM_BUGSNAG_URI = 'http://bugsnag.simplabs.com/deploy';
+          let CUSTOM_BUGSNAG_URI = 'http://bugsnag.simplabs.com/deploy';
           services.bugsnag.url   = CUSTOM_BUGSNAG_URI;
 
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = plugin.didActivate(context);
+          let promise = plugin.didActivate(context);
 
           return assert.isFulfilled(promise)
             .then(function() {
               assert.equal(serviceCalls.length, 1);
 
-              var call = serviceCalls[0];
+              let call = serviceCalls[0];
 
               assert.equal(call.url, CUSTOM_BUGSNAG_URI);
               assert.deepEqual(call.body, { apiKey: '1234' });
@@ -143,13 +148,13 @@ describe('webhooks plugin', function() {
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = plugin.didActivate(context);
+          let promise = plugin.didActivate(context);
 
           return assert.isFulfilled(promise)
             .then(function() {
               assert.equal(serviceCalls.length, 1);
 
-              var call = serviceCalls[0];
+              let call = serviceCalls[0];
 
               assert.equal(call.url, BUGSNAG_URI);
               assert.deepEqual(call.body, { apiKey: '4321' });
@@ -168,13 +173,13 @@ describe('webhooks plugin', function() {
           plugin.configure(context);
           plugin.didActivate(context);
 
-          var promise = plugin.didDeploy(context);
+          let promise = plugin.didDeploy(context);
 
           return assert.isFulfilled(promise)
             .then(function() {
               assert.equal(serviceCalls.length, 1);
 
-              var call = serviceCalls[0];
+              let call = serviceCalls[0];
 
               assert.equal(call.url, BUGSNAG_URI);
               assert.deepEqual(call.body, { apiKey: 'hook specific' });
@@ -189,7 +194,7 @@ describe('webhooks plugin', function() {
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = Promise.all([
+          let promise = Promise.all([
             plugin.setup(context),
 
             plugin.willDeploy(context),
@@ -221,7 +226,7 @@ describe('webhooks plugin', function() {
         });
 
         it('is possible to specify hooks where slack should be notified', function() {
-          var webhookURL = 'https://hooks.slack.com/services/my-webhook-url';
+          let webhookURL = 'https://hooks.slack.com/services/my-webhook-url';
           services.slack = {
             webhookURL: webhookURL,
 
@@ -241,7 +246,7 @@ describe('webhooks plugin', function() {
           plugin.beforeHook(context);
           plugin.configure(context);
 
-          var promise = Promise.all([
+          let promise = Promise.all([
             plugin.setup(context),
 
             plugin.willDeploy(context),
@@ -270,8 +275,8 @@ describe('webhooks plugin', function() {
             .then(function() {
               assert.equal(serviceCalls.length, 2);
 
-              var didActivateMessage = serviceCalls[0];
-              var didDeployMessage   = serviceCalls[1];
+              let didActivateMessage = serviceCalls[0];
+              let didDeployMessage   = serviceCalls[1];
 
               assert.deepEqual(didActivateMessage.body, { text: 'didActivate' });
               assert.deepEqual(didActivateMessage.url, webhookURL);
@@ -287,7 +292,7 @@ describe('webhooks plugin', function() {
 
     describe('user configured services', function() {
       it('allows to notify services that are not preconfigured', function() {
-        var CUSTOM_URI = 'https://my-custom-hack.com/deployment-webhooks';
+        let CUSTOM_URI = 'https://my-custom-hack.com/deployment-webhooks';
 
         services.custom = {
           url: CUSTOM_URI,
@@ -302,13 +307,13 @@ describe('webhooks plugin', function() {
         plugin.beforeHook(context);
         plugin.configure(context);
 
-        var promise = plugin.didActivate(context);
+        let promise = plugin.didActivate(context);
 
         return assert.isFulfilled(promise)
           .then(function() {
             assert.equal(serviceCalls.length, 1);
 
-            var call = serviceCalls[0];
+            let call = serviceCalls[0];
 
             assert.equal(call.url, CUSTOM_URI);
             assert.deepEqual(call.body, { deployer: 'levelbossmike' });
