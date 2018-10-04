@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-deploy-webhooks",
-  "version": "0.4.2",
+  "version": "1.0.0-beta.1",
   "description": "Ember CLI Deploy plugin for calling webhooks during deployments",
   "keywords": [
     "ember-addon",
