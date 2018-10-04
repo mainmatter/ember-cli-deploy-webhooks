@@ -1,6 +1,6 @@
 const Promise = require('rsvp');
 const chai = require('chai');
-const chaiAsPromised = require("chai-as-promised");
+const chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
 
@@ -12,7 +12,7 @@ describe('webhooks plugin', function() {
   let BUGSNAG_URI = 'http://notify.bugsnag.com/deploy';
 
   before(function() {
-    subject = require('../../index');
+    subject = require('../../index'); // eslint-disable-line node/no-missing-require
   });
 
   beforeEach(function() {
@@ -24,7 +24,7 @@ describe('webhooks plugin', function() {
 
     callbackReturnValue = undefined;
 
-    mockHTTP = function(context) {
+    mockHTTP = function() {
       return function(opts, cb) {
         serviceCalls.push({
           url: opts.url,
@@ -34,13 +34,13 @@ describe('webhooks plugin', function() {
         });
 
         cb(callbackReturnValue);
-      }
+      };
     };
 
     mockUi = {
       messages: [],
-      write: function() {},
-      writeLine: function(message) {
+      write() {},
+      writeLine(message) {
         this.messages.push(message);
       }
     };
@@ -52,7 +52,7 @@ describe('webhooks plugin', function() {
 
       if (!opts.verbose || (opts.verbose && this.ui.verbose)) {
         this.ui.write('|    ');
-        this.ui.writeLine('- ' + message);
+        this.ui.writeLine(`- ${message}`);
       }
     };
 
@@ -61,11 +61,11 @@ describe('webhooks plugin', function() {
 
       config: {
         webhooks: {
-          services: services,
+          services,
           httpClient: mockHTTP
         }
       }
-    }
+    };
   });
 
   it('has a name', function() {
@@ -73,7 +73,7 @@ describe('webhooks plugin', function() {
   });
 
   describe('configuring services', function() {
-    it("warns of services that are configured but have not hook turned on", function() {
+    it('warns of services that are configured but have not hook turned on', function() {
       services.bugsnag = {
         apiKey: '1234'
       };
@@ -84,12 +84,12 @@ describe('webhooks plugin', function() {
 
       plugin.beforeHook(context);
       plugin.configure(context);
+      plugin.setup(context);
 
-      let promise = plugin.setup(context);
       let messages = mockUi.messages;
 
       assert.isAbove(messages.length, 0);
-      assert.equal(messages[0], '- Warning! bugsnag - Service configuration found but no hook specified in deploy configuration. Service will not be notified.')
+      assert.equal(messages[0], '- Warning! bugsnag - Service configuration found but no hook specified in deploy configuration. Service will not be notified.');
     });
 
     describe('preconfigured services', function() {
@@ -121,7 +121,7 @@ describe('webhooks plugin', function() {
 
         it('calls custom-url for preconfigured services when url is passed via config', function() {
           let CUSTOM_BUGSNAG_URI = 'http://bugsnag.simplabs.com/deploy';
-          services.bugsnag.url   = CUSTOM_BUGSNAG_URI;
+          services.bugsnag.url = CUSTOM_BUGSNAG_URI;
 
           plugin.beforeHook(context);
           plugin.configure(context);
@@ -222,13 +222,13 @@ describe('webhooks plugin', function() {
           return assert.isFulfilled(promise)
             .then(function() {
               assert.equal(serviceCalls.length, 0);
-            })
+            });
         });
 
         it('is possible to specify hooks where slack should be notified', function() {
           let webhookURL = 'https://hooks.slack.com/services/my-webhook-url';
           services.slack = {
-            webhookURL: webhookURL,
+            webhookURL,
 
             didDeploy: {
               body: {
@@ -276,7 +276,7 @@ describe('webhooks plugin', function() {
               assert.equal(serviceCalls.length, 2);
 
               let didActivateMessage = serviceCalls[0];
-              let didDeployMessage   = serviceCalls[1];
+              let didDeployMessage = serviceCalls[1];
 
               assert.deepEqual(didActivateMessage.body, { text: 'didActivate' });
               assert.deepEqual(didActivateMessage.url, webhookURL);

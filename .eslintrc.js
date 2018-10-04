@@ -1,32 +1,23 @@
 module.exports = {
   root: true,
+  extends: [
+    'simplabs',
+    'simplabs/plugins/ember',
+  ],
   parserOptions: {
     ecmaVersion: 2017,
     sourceType: 'module'
-  },
-  plugins: [
-    'ember'
-  ],
-  extends: [
-    'eslint:recommended',
-    'plugin:ember/recommended'
-  ],
-  env: {
-    browser: true
-  },
-  rules: {
   },
   overrides: [
     // node files
     {
       files: [
-        '.template-lintrc.js',
         'ember-cli-build.js',
+        'fastboot-server.js',
         'index.js',
         'testem.js',
-        'blueprints/*/index.js',
         'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'tests/**/*.js'
       ],
       excludedFiles: [
         'addon/**',
@@ -44,8 +35,19 @@ module.exports = {
       },
       plugins: ['node'],
       rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
+        "node/no-extraneous-require": "off",
+        "node/no-unpublished-require": "off"
         // add your custom rules and overrides for node files here
       })
+    }, {
+      files: [
+        "lib/**/*.js",
+        "tests/**/*-nodetest.js",
+      ],
+      env: {
+        node: true,
+        mocha: true
+      }
     }
   ]
 };

@@ -1,14 +1,14 @@
 'use strict';
 
-var glob = require('glob');
-var Mocha = require('mocha');
+let glob = require('glob');
+let Mocha = require('mocha');
 
-var mocha = new Mocha({
+let mocha = new Mocha({
   reporter: 'spec'
 });
 
-var arg = process.argv[2];
-var root = 'tests/';
+let arg = process.argv[2];
+let root = 'tests/';
 
 function addFiles(mocha, files) {
   glob.sync(root + files).forEach(mocha.addFile.bind(mocha));
@@ -22,6 +22,6 @@ if (arg === 'all') {
 
 mocha.run(function(failures) {
   process.on('exit', function() {
-    process.exit(failures);
+    process.exit(failures);  // eslint-disable-line
   });
 });
