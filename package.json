@@ -29,7 +29,7 @@
     "ember-cli-deploy-plugin": "0.2.9",
     "ember-cli-htmlbars": "^4.2.3",
     "lodash": "^3.10.1",
-    "request": "^2.65.0",
+    "request": "^2.88.2",
     "rsvp": "^3.5.0"
   },
   "devDependencies": {
