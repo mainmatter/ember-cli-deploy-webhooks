@@ -24,7 +24,7 @@
     "test:node": "node tests/runner.js"
   },
   "dependencies": {
-    "core-object": "^1.1.0",
+    "core-object": "^3.1.5",
     "ember-cli-babel": "^7.18.0",
     "ember-cli-deploy-plugin": "0.2.9",
     "ember-cli-htmlbars": "^4.2.3",
