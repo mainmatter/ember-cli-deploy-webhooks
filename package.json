@@ -24,7 +24,7 @@
     "core-object": "^1.1.0",
     "ember-cli-babel": "^6.16.0",
     "ember-cli-deploy-plugin": "0.2.0",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.11",
     "request": "^2.65.0",
     "rsvp": "^3.5.0"
   },
