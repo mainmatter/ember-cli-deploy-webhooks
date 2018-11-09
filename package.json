@@ -26,7 +26,7 @@
   "dependencies": {
     "core-object": "^1.1.0",
     "ember-cli-babel": "^7.18.0",
-    "ember-cli-deploy-plugin": "0.2.0",
+    "ember-cli-deploy-plugin": "0.2.9",
     "ember-cli-htmlbars": "^4.2.3",
     "lodash": "^3.10.1",
     "request": "^2.65.0",
