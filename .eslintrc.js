@@ -1,23 +1,30 @@
+'use strict';
+
 module.exports = {
   root: true,
-  extends: [
-    'simplabs',
-    'simplabs/plugins/ember',
-  ],
+  parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 2017,
-    sourceType: 'module'
+    ecmaVersion: 2018,
+    sourceType: 'module',
+    ecmaFeatures: {
+      legacyDecorators: true
+    }
+  },
+  env: {
+    browser: true
   },
   overrides: [
     // node files
     {
       files: [
+        '.eslintrc.js',
+        '.template-lintrc.js',
         'ember-cli-build.js',
-        'fastboot-server.js',
         'index.js',
         'testem.js',
+        'blueprints/*/index.js',
         'config/**/*.js',
-        'tests/**/*.js'
+        'tests/dummy/config/**/*.js'
       ],
       excludedFiles: [
         'addon/**',
@@ -26,8 +33,7 @@ module.exports = {
         'tests/dummy/app/**'
       ],
       parserOptions: {
-        sourceType: 'script',
-        ecmaVersion: 2015
+        sourceType: 'script'
       },
       env: {
         browser: false,
@@ -35,14 +41,14 @@ module.exports = {
       },
       plugins: ['node'],
       rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
-        "node/no-extraneous-require": "off",
-        "node/no-unpublished-require": "off"
+        'node/no-extraneous-require': 'off',
+        'node/no-unpublished-require': 'off'
         // add your custom rules and overrides for node files here
       })
     }, {
       files: [
-        "lib/**/*.js",
-        "tests/**/*-nodetest.js",
+        'lib/**/*.js',
+        'tests/**/*-nodetest.js',
       ],
       env: {
         node: true,
