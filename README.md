@@ -367,7 +367,7 @@ The underlying http-library used to send requests to the specified services. Thi
 
 ## Running Tests
 
-- `npm test`
+- `yarn test`
 
 [1]: http://ember-cli-deploy.com/docs/v0.6.x/plugins-overview/ "Plugin Documentation"
 
